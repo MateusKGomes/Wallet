@@ -4,25 +4,16 @@ import {
   REQUEST_API, API_ERROR,
   EXPENSE_INFOS,
   DELETE_EXPENSE,
+  START_EDITING,
+  FINISH_EDIT_EXPENSE,
 } from '../actions';
 
 const INITIAL_STATE = {
   currencies: [],
   expenses: [],
+  editor: false,
+  idToEdit: 0,
 };
-
-// const getId = (state, payload, id) => state.expenses.map((expense) => {
-//   if (expense.id === id) {
-//     return {
-//       id: expense.id,
-//       exchangeRates: expense.exchangeRates,
-//       ...payload,
-//     };
-//   }
-//   return state;
-// });
-// console.log(getId());
-// return (...state, expenses:  getId(state, payload, id), editingExpenses: null) // retorno da última estrutura
 
 const coinRedcuer = (state = INITIAL_STATE, { type, payload }) => {
   switch (type) {
@@ -50,6 +41,26 @@ const coinRedcuer = (state = INITIAL_STATE, { type, payload }) => {
     return {
       ...state,
       expenses: payload,
+    };
+  case START_EDITING:
+    return {
+      ...state,
+      editor: true,
+      editingInfos: payload,
+    };
+  case FINISH_EDIT_EXPENSE:
+    return {
+      ...state,
+      expenses: state.expenses.map((expense) => {
+        if (expense.id === payload.id) {
+          return {
+            ...expense,
+            ...payload,
+          };
+        }
+        return expense;
+      }),
+      editor: false,
     };
   default:
     return state;

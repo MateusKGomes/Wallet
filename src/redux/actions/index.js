@@ -8,6 +8,7 @@ export const API_PRICE_SUCESS = 'API_PRICE_SUCESS';
 export const EXPENSE_INFOS = 'EXPENSE_INFOS';
 export const FINISH_EDIT_EXPENSE = 'FINISH_EDIT_EXPENSE';
 export const DELETE_EXPENSE = 'DELETE_EXPENSE';
+export const START_EDITING = 'START_EDITING';
 
 export const addEmail = (payload) => ({
   type: ADD_EMAIL,
@@ -17,10 +18,6 @@ export const addEmail = (payload) => ({
 export const expenseAction = (payload) => ({
   type: EXPENSE_INFOS,
   payload,
-});
-
-const requestApiStarted = () => ({
-  type: REQUEST_API,
 });
 
 const receiveSucess = (payload) => ({
@@ -38,15 +35,18 @@ export const deleteAfterClick = (newList) => ({
   payload: newList,
 });
 
-// export const finishEdit = (id, payload) => ({
-//   type: FINISH_EDIT_EXPENSE,
-//   id,
-//   payload,
-// });
+export const finishEdit = (newText) => ({
+  type: FINISH_EDIT_EXPENSE,
+  payload: newText,
+});
+
+export const startEditing = (id) => ({
+  type: START_EDITING,
+  payload: id,
+});
 
 export const coinRequest = () => async (dispatch) => {
   try {
-    dispatch(requestApiStarted());
     const response = await coinApi();
     const coins = Object.keys(response);
     const remove = coins.filter((coin) => coin !== 'USDT');
@@ -58,7 +58,6 @@ export const coinRequest = () => async (dispatch) => {
 
 export const priceRequest = (expense) => async (dispatch) => {
   try {
-    // dispatch(requestApiStarted());
     const response = await coinApi();
     dispatch(expenseAction({ ...expense, exchangeRates: response }));
   } catch (error) {

@@ -1,13 +1,18 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { deleteAfterClick } from '../redux/actions';
+import { deleteAfterClick, startEditing } from '../redux/actions';
 
 class Table extends Component {
   handleDeleteClick = ({ target }) => {
     const { dispatch, expenses } = this.props;
     const deleteItemById = expenses.filter((expense) => expense.id !== Number(target.id));
     dispatch(deleteAfterClick(deleteItemById));
+  };
+
+  startEditing = (param) => {
+    const { dispatch } = this.props;
+    dispatch(startEditing(param));
   };
 
   render() {
@@ -27,20 +32,20 @@ class Table extends Component {
             <th>Editar/Excluir</th>
           </tr>
         </thead>
-        <tbody>
-          {
-            expenses.map((expense) => {
-              const
-                { id, description, method,
-                  tag, value, currency, exchangeRates,
-                } = expense;
-              const valueNumber = Number(value);
-              const cambio = exchangeRates[currency].ask;
-              const convertedValue = valueNumber * cambio;
-              const cambioNumber = Number(cambio);
-              const coinName = exchangeRates[currency].name;
-              return (
-                <tr key={ id }>
+        {
+          expenses.map((expense) => {
+            const
+              { id, description, method,
+                tag, value, currency, exchangeRates,
+              } = expense;
+            const valueNumber = Number(value);
+            const cambio = exchangeRates[currency].ask;
+            const convertedValue = valueNumber * cambio;
+            const cambioNumber = Number(cambio);
+            const coinName = exchangeRates[currency].name;
+            return (
+              <tbody key={ id }>
+                <tr>
                   <td>{description}</td>
                   <td>{tag}</td>
                   <td>{method}</td>
@@ -49,6 +54,7 @@ class Table extends Component {
                   <td>{cambioNumber.toFixed(2)}</td>
                   <td>{convertedValue.toFixed(2)}</td>
                   <td>Real</td>
+
                   <td>
                     <button
                       type="button"
@@ -58,12 +64,20 @@ class Table extends Component {
                     >
                       Excluir
                     </button>
+                    <button
+                      type="button"
+                      id={ id }
+                      data-testid="edit-btn"
+                      onClick={ () => this.startEditing(expense) }
+                    >
+                      Editar
+                    </button>
                   </td>
                 </tr>
-              );
-            })
-          }
-        </tbody>
+              </tbody>
+            );
+          })
+        }
       </table>
 
     );
@@ -79,5 +93,6 @@ Table.propTypes = {
 };
 const mapStateToProps = (state) => ({
   expenses: state.wallet.expenses,
+  editor: state.wallet.editor,
 });
 export default connect(mapStateToProps)(Table);

@@ -1,8 +1,9 @@
 import { React } from 'react';
-import { screen, act, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
 import { renderWithRouterAndRedux } from './helpers/renderWith';
+import Wallet from '../pages/Wallet';
 
 describe(' Teste o componente <App.js />', () => {
   test('Página inicial, título e inputs', () => {
@@ -22,18 +23,15 @@ describe(' Teste o componente <App.js />', () => {
     expect(pathname).toBe('/carteira');
   });
   test('A rota carteira e suas funcionalidades', async () => {
-    const { history } = renderWithRouterAndRedux(<App />);
-    act(() => {
-      history.push('/carteira');
-    });
+    renderWithRouterAndRedux(<Wallet />);
     const expense = screen.getByRole('textbox', { name: /valor da despesa:/i });
     userEvent.type(expense, '10');
     const description = screen.getByRole('textbox', { name: /descrição da despesa:/i });
     userEvent.type(description, 'marmitex');
-    // const currency = screen.getByTestId('currency-input');
-    // userEvent.click(currency);
-    // const tag = screen.getByRole('columnheader', { name: /tag/i });
-    // expect(tag).toBeInTheDocument();
+    const currency = screen.getByTestId('currency-input');
+    userEvent.click(currency);
+    const tag = screen.getByRole('columnheader', { name: /tag/i });
+    expect(tag).toBeInTheDocument();
     const button = screen.getByRole('button', { name: /adicionar despesa/i });
     userEvent.click(button);
     await waitFor(() => {
