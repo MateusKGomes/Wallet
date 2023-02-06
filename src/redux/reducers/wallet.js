@@ -1,7 +1,7 @@
 // Esse reducer será responsável por tratar o todas as informações relacionadas as despesas
 import {
   API_SUCESS,
-  REQUEST_API, API_ERROR,
+  API_ERROR,
   EXPENSE_INFOS,
   DELETE_EXPENSE,
   START_EDITING,
@@ -21,10 +21,6 @@ const coinRedcuer = (state = INITIAL_STATE, { type, payload }) => {
     return {
       ...state,
       currencies: payload,
-    };
-  case REQUEST_API:
-    return {
-      ...state,
     };
   case API_ERROR:
     return {

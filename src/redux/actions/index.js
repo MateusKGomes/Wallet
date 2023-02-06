@@ -3,7 +3,6 @@ import coinApi from '../../services/API';
 export const ADD_EMAIL = 'ADD_EMAIL';
 export const API_SUCESS = 'API_SUCESS';
 export const API_ERROR = 'API_ERROR';
-export const REQUEST_API = 'REQUEST_API';
 export const API_PRICE_SUCESS = 'API_PRICE_SUCESS';
 export const EXPENSE_INFOS = 'EXPENSE_INFOS';
 export const FINISH_EDIT_EXPENSE = 'FINISH_EDIT_EXPENSE';

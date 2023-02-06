@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import App from '../App';
 import { renderWithRouterAndRedux } from './helpers/renderWith';
 import Wallet from '../pages/Wallet';
+import mockData from './helpers/mockData';
 
 describe(' Teste o componente <App.js />', () => {
   test('Página inicial, título e inputs', () => {
@@ -23,7 +24,12 @@ describe(' Teste o componente <App.js />', () => {
     expect(pathname).toBe('/carteira');
   });
   test('A rota carteira e suas funcionalidades', async () => {
+    jest.spyOn(global, 'fetch');
+    global.fetch.mockResolvedValue({
+      json: jest.fn().mockResolvedValue(mockData),
+    });
     renderWithRouterAndRedux(<Wallet />);
+    expect(global.fetch).toHaveBeenCalledTimes(1);
     const expense = screen.getByRole('textbox', { name: /valor da despesa:/i });
     userEvent.type(expense, '10');
     const description = screen.getByRole('textbox', { name: /descrição da despesa:/i });
@@ -36,7 +42,13 @@ describe(' Teste o componente <App.js />', () => {
     userEvent.click(button);
     await waitFor(() => {
       const deleteButton = screen.queryByRole('button', { name: /excluir/i });
-      expect(deleteButton).toBeInTheDocument();
+      const editButton = screen.queryByRole('button', { name: /editar/i });
+      expect(deleteButton && editButton).toBeInTheDocument();
+      userEvent.click(editButton);
+      const editSubmit = screen.getByRole('button', { name: /editar despesa/i });
+      expect(editSubmit).toBeInTheDocument();
+      userEvent.type(expense, '13');
+      userEvent.click(editSubmit);
       const descriptionTable = screen.queryByRole('cell', { name: /marmitex/i });
       expect(descriptionTable).toBeInTheDocument();
       userEvent.click(deleteButton);
