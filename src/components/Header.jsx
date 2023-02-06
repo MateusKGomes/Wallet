@@ -9,7 +9,7 @@ class Header extends Component {
       const value = cur.value * cur.exchangeRates[cur.currency].ask;
       const newValue = Number(value) + parseFloat(acc);
       return newValue.toFixed(2);
-    }, 0);
+    }, '0.00');
     return total;
   };
 

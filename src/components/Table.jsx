@@ -1,8 +1,15 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { deleteAfterClick } from '../redux/actions';
 
 class Table extends Component {
+  handleDeleteClick = ({ target }) => {
+    const { dispatch, expenses } = this.props;
+    const deleteItemById = expenses.filter((expense) => expense.id !== Number(target.id));
+    dispatch(deleteAfterClick(deleteItemById));
+  };
+
   render() {
     const { expenses } = this.props;
     return (
@@ -22,9 +29,9 @@ class Table extends Component {
         </thead>
         <tbody>
           {
-            expenses.map((expense, index) => {
+            expenses.map((expense) => {
               const
-                { description, method,
+                { id, description, method,
                   tag, value, currency, exchangeRates,
                 } = expense;
               const valueNumber = Number(value);
@@ -33,7 +40,7 @@ class Table extends Component {
               const cambioNumber = Number(cambio);
               const coinName = exchangeRates[currency].name;
               return (
-                <tr key={ index }>
+                <tr key={ id }>
                   <td>{description}</td>
                   <td>{tag}</td>
                   <td>{method}</td>
@@ -42,13 +49,20 @@ class Table extends Component {
                   <td>{cambioNumber.toFixed(2)}</td>
                   <td>{convertedValue.toFixed(2)}</td>
                   <td>Real</td>
-                  <td>Editar/Excluir</td>
-
+                  <td>
+                    <button
+                      type="button"
+                      id={ id }
+                      data-testid="delete-btn"
+                      onClick={ this.handleDeleteClick }
+                    >
+                      Excluir
+                    </button>
+                  </td>
                 </tr>
               );
             })
           }
-
         </tbody>
       </table>
 
@@ -57,12 +71,13 @@ class Table extends Component {
 }
 
 Table.propTypes = {
+  dispatch: PropTypes.func.isRequired,
   expenses: PropTypes.shape({
+    filter: PropTypes.func,
     map: PropTypes.func,
   }).isRequired,
 };
 const mapStateToProps = (state) => ({
-  currencies: state.wallet.currencies,
   expenses: state.wallet.expenses,
 });
 export default connect(mapStateToProps)(Table);
